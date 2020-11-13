@@ -1,0 +1,1 @@
+gcc -o risolvi-espressioni ./src/risolvi-espressioni.c -ansi -pedantic
