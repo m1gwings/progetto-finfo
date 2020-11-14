@@ -54,9 +54,10 @@ int LeggiEspressione(FILE* FlussoIn, char* Espressione) {
     ContaCar = 0;
 
     /* Il ciclo continua a leggere caratteri fino al terminatore o fino a quando
-     * il numero di caratteri memorizzati è minore della lunghezza massima dell'espressione meno 1,
-     * dato che alla fine viene inserito il tappo \x00 */
-    while (c = fgetc(FlussoIn), c != Terminatore && ContaCar < LUNG_MAX-1) {
+     * il numero di caratteri memorizzati è minore della lunghezza massima dell'espressione meno 2,
+     * dato che alla fine viene inserito il tappo \x00 e che se c'è un '-' dopo un'operazione
+     * o una parentesi aperta allora vengono inseriti due caratteri nella stessa iterazione */
+    while (c = fgetc(FlussoIn), c != Terminatore && ContaCar < LUNG_MAX-2) {
         /* I caratteri di separazione vengono ignorati */
         if (c == ' ' || c == '\t') {
             continue;
@@ -66,6 +67,15 @@ int LeggiEspressione(FILE* FlussoIn, char* Espressione) {
         if (!CratteriValidi[c]) {
             fprintf(stderr, "\033[0;31malcuni dei caratteri inseriti non sono validi\033[0m\n");
             return 1;
+        }
+
+        if (c == '-' && (ContaCar == 0 ||
+            Espressione[ContaCar-1] == '+' ||
+            Espressione[ContaCar-1] == '-' ||
+            Espressione[ContaCar-1] == '*' ||
+            Espressione[ContaCar-1] == '/' ||
+            Espressione[ContaCar-1] == '(')) {
+            Espressione[ContaCar++] = '0';
         }
 
         Espressione[ContaCar++] = c;
