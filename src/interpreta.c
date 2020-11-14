@@ -59,7 +59,7 @@ int LeggiEspressione(FILE* FlussoIn, char* Espressione) {
      * o una parentesi aperta allora vengono inseriti due caratteri nella stessa iterazione */
     while (c = fgetc(FlussoIn), c != Terminatore && ContaCar < LUNG_MAX-2) {
         /* I caratteri di separazione vengono ignorati */
-        if (c == ' ' || c == '\t') {
+        if (c == ' ' || c == '\t' || c == '\n') {
             continue;
         }
 
