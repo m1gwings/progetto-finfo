@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "interpreta.h"
 #include "espressione.h"
+#include "calcola.h"
 
 int main(void) {
     Elemento *InizioExpr, *FineExpr, *Iter;
@@ -8,7 +9,7 @@ int main(void) {
         return 1;
     }
 
-    Iter = InizioExpr;
+    /* Iter = InizioExpr;
     while (Iter != NULL) {
         switch (Iter->Tipo) {
         case Op:
@@ -76,7 +77,8 @@ int main(void) {
         Iter = Iter->Prec;
     }
 
-    printf("\n");
+    printf("\n"); */
+    printf("%.2f\n", Calcola(InizioExpr, FineExpr));
 
     return 0;
 }

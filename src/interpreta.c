@@ -119,7 +119,7 @@ Elemento* InterpretaFrammento(int* Inizio, char* Espressione) {
 
         Elem->Val = 0;
         /* Questo ciclo serve ad incrementare Inizio fino all'inizo del
-         * frammento successivo e converte i caratteri nel valore float */
+         * frammento successivo e converte i caratteri nel valore double */
         while ( Espressione[*Inizio] != '+' &&
                 Espressione[*Inizio] != '-' &&
                 Espressione[*Inizio] != '*' &&
@@ -134,7 +134,7 @@ Elemento* InterpretaFrammento(int* Inizio, char* Espressione) {
             }
 
             if (ParteDecimale > 0) {
-                Elem->Val += (float)(Espressione[*Inizio]-'0') * (float)pow(10, -ParteDecimale);
+                Elem->Val += (double)(Espressione[*Inizio]-'0') * (double)pow(10, -ParteDecimale);
                 ParteDecimale++;
             } else {
                 Elem->Val *= 10;

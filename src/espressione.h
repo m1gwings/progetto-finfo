@@ -5,7 +5,7 @@
 /* TipoElemento descrive il tipo di elemento che può comporre un'espressione:
  *  - Op  -> Operazione
  *  - Par -> Parentesi
- *  - Val -> Un qualsiasi valore float */
+ *  - Val -> Un qualsiasi valore double */
 typedef enum {
     Op,
     Par,
@@ -40,7 +40,7 @@ typedef struct Elemento {
     TipoElemento Tipo;
     Operazione Op;
     Parentesi Par;
-    float Val;
+    double Val;
 
     struct Elemento* Succ;
     struct Elemento* Prec;
