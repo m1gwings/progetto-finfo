@@ -4,7 +4,7 @@
 
 /* Calcola è una funzione ricorsiva che riceve InizioExpr e FineExpr,
  * che sono rispettivamete testa e coda della lista dinamica rappresentante
- * l'espressione algebrica, e ne restituisce il risultato */
+ * l'espressione aritmetica, e ne restituisce il risultato */
 double Calcola(Elemento* InizioExpr, Elemento* FineExpr);
 
 #endif

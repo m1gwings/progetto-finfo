@@ -1,9 +1,9 @@
 # risolvi-espressioni
-*Programma che calcola il valore di espressioni algebriche*
+*Programma che calcola il valore di espressioni aritmetiche*
 
 *Realizzato per un progetto assegnato durante il corso di Fondamenti di Informatica del Prof. Vincenzo Caglioti*
 ## Utilizzo
-Invocando il programma senza opzioni sarà richiesto di inserire l'espressione algebrica da valutare
+Invocando il programma senza opzioni sarà richiesto di inserire l'espressione aritmetica da valutare
 ```sh
 >> ./risolvi-espressioni
 
