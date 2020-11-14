@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    printf("%.2f\n", Calcola(InizioExpr, FineExpr));
+    printf("%f\n", Calcola(InizioExpr, FineExpr));
 
     return 0;
 }
