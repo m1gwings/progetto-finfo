@@ -72,8 +72,6 @@ int LeggiEspressione(FILE* FlussoIn, char* Espressione) {
         if (c == '-' && (ContaCar == 0 ||
             Espressione[ContaCar-1] == '+' ||
             Espressione[ContaCar-1] == '-' ||
-            Espressione[ContaCar-1] == '*' ||
-            Espressione[ContaCar-1] == '/' ||
             Espressione[ContaCar-1] == '(')) {
             Espressione[ContaCar++] = '0';
         }
