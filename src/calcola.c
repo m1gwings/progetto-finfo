@@ -35,17 +35,6 @@ double Calcola(Elemento* InizioExpr, Elemento* FineExpr) {
         return 0;
     }
 
-    /* Se c'è un solo elemento restituisce il valore di quell'elemento o
-     * un errore se l'elemento non è di tipo Val */
-    if (InizioExpr == FineExpr) {
-        if (InizioExpr->Tipo == Val) {
-            return InizioExpr->Val;
-        } else {
-            fprintf(stderr, "\033[0;31mtrovata sottoespressione senza valore durante il calcolo\033[0m\n");
-            return 0;
-        }
-    }
-
     Prior = 0;
     MinPriorElem = NULL;
 
@@ -80,6 +69,21 @@ double Calcola(Elemento* InizioExpr, Elemento* FineExpr) {
             }
         }
         Iter = Iter->Prec;
+    }
+
+    /* Se non ci sono operazioni restituisce il valore che trova in mezzo alle parentesi */
+    if (MinPriorElem == NULL) {
+        Iter = FineExpr;
+        while (Iter != NULL) {
+            if (Iter->Tipo == Val) {
+                return Iter->Val;
+            }
+
+            Iter = Iter->Prec;
+        }
+
+        fprintf(stderr, "\033[0;31mtrovata sottoespressione priva di valori\033[0m\n");
+        return 0;
     }
 
     /* Richiama ricorsivamente se stessa svolgendo le operazioni */

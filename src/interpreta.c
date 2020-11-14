@@ -251,13 +251,13 @@ int Interpreta(FILE* FlussoIn, Elemento** InizioExpr, Elemento** FineExpr) {
                 fprintf(stderr, "\033[0;31merrore sintattico prima dell'indice %d\033[0m\n", i);
                 return 1;
             }
+        }
 
-            if (Elem->Tipo == Par) {
-                if (Elem->Par == Aperta) {
-                    ParAperte++;
-                } else {
-                    ParChiuse++;
-                }
+        if (Elem->Tipo == Par) {
+            if (Elem->Par == Aperta) {
+                ParAperte++;
+            } else {
+                ParChiuse++;
             }
         }
     }
