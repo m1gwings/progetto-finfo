@@ -1,5 +1,6 @@
 #include "interpreta.h"
 #include <stdlib.h>
+#include <math.h>
 
 /* Lunghezza massima della stringa contenente l'espressione */
 #define LUNG_MAX 100
@@ -70,6 +71,8 @@ int LeggiEspressione(FILE* FlussoIn, char* Espressione) {
         Espressione[ContaCar++] = c;
     }
 
+    Espressione[ContaCar] = '\x00';
+
     return 0;
 }
 
@@ -79,6 +82,9 @@ Elemento* InterpretaFrammento(int* Inizio, char* Espressione) {
 
     /* Alloca dinamicamente il nuovo elemento */
     Elem = (Elemento*)malloc(sizeof(Elemento));
+
+    Elem->Succ = NULL;
+    Elem->Prec = NULL;
 
     /* A seconda del carattere letto inizializza Elem */
     if (Espressione[*Inizio] == '+') {
@@ -95,10 +101,10 @@ Elemento* InterpretaFrammento(int* Inizio, char* Espressione) {
         Elem->Op = Div;
     } else if (Espressione[*Inizio] == '(') {
         Elem->Tipo = Par;
-        Elem->Op = Aperta;
+        Elem->Par = Aperta;
     } else if (Espressione[*Inizio] == ')') {
         Elem->Tipo = Par;
-        Elem->Op = Chiusa;
+        Elem->Par = Chiusa;
     } else if (Espressione[*Inizio] == '.') {
         /* Nel caso in cui venisse inserito un punto senza cifre prima o dopo
          * la funziona restituisce NULL */
@@ -106,12 +112,14 @@ Elemento* InterpretaFrammento(int* Inizio, char* Espressione) {
         fprintf(stderr, "\033[0;31mil punto inserito in posizione %d è un errore sintattico\033[0m\n", *Inizio);
         return NULL;
     } else {
+        /* Ha valore 0 se il ciclo sta iterando sulla parte intera del numero da interpretare,
+         * dopo aver raggiunto il carattere '.' ha valore incrementale */
+        int ParteDecimale = 0;
         Elem->Tipo = Val;
-        /* Sfrutta atof per interpretare il valore float */
-        Elem->Val = atof(Espressione+*Inizio);
 
+        Elem->Val = 0;
         /* Questo ciclo serve ad incrementare Inizio fino all'inizo del
-         * frammento successivo */
+         * frammento successivo e converte i caratteri nel valore float */
         while ( Espressione[*Inizio] != '+' &&
                 Espressione[*Inizio] != '-' &&
                 Espressione[*Inizio] != '*' &&
@@ -119,14 +127,79 @@ Elemento* InterpretaFrammento(int* Inizio, char* Espressione) {
                 Espressione[*Inizio] != '(' &&
                 Espressione[*Inizio] != ')' &&
                 Espressione[*Inizio] != '\x00') {
-            *Inizio++;
+            if (Espressione[*Inizio] == '.') {
+                ParteDecimale = 1;
+                (*Inizio)++;
+                continue;
+            }
+
+            if (ParteDecimale > 0) {
+                Elem->Val += (float)(Espressione[*Inizio]-'0') * (float)pow(10, -ParteDecimale);
+                ParteDecimale++;
+            } else {
+                Elem->Val *= 10;
+                Elem->Val += Espressione[*Inizio]-'0';
+            }
+            (*Inizio)++;
         }
+
+        if (ParteDecimale == 1) {
+            fprintf(stderr, "\033[0;31mil punto inserito in posizione %d è un errore sintattico\033[0m\n", *Inizio-1);
+            return NULL;
+        }
+
+        /* Inizio viene decrementato perchè sarà poi incrementato alla fine della funzione */
+        (*Inizio)--;
     }
+
+    /* Incrementa l'iteratore che ora punta all'inizio del frammento successivo */
+    (*Inizio)++;
 
     return Elem;
 }
 
-int Interpreta(FILE* FlussoIn, Elemento* InizioExpr, Elemento* FineExpr) {
+int SequenzaValida(Elemento* Prec, Elemento* Succ) {
+    if (Succ->Tipo == Op) {
+        /* Il susseguirsi di due operazioni è un errore sintattico */
+        if (Prec->Tipo == Op) {
+            return 0;
+        }
+
+        /* Un'operazione dopo una parentesi aperta è un errore sintattico */
+        if (Prec->Tipo == Par && Prec->Par == Aperta) {
+            return 0;
+        }
+
+        return 1;
+    } else if (Succ->Tipo == Par) {
+        if (Succ->Par == Aperta) {
+            /* Una parentesi può stare dopo un'operazione oppure dopo un'altra
+             * parentesi aperta */
+            if (Prec->Tipo == Op || (Prec->Tipo == Par && Prec->Par == Aperta)) {
+                return 1;
+            }
+
+            return 0;
+        } else {
+            /* Una parentesi chiuse dopo un'operazione opppure dopo una parentesi
+             * aperta è un errore sintattico */
+            if (Prec->Tipo == Op || (Prec->Tipo == Par && Prec->Par == Aperta)) {
+                return 0;
+            }
+
+            return 1;
+        }
+    } else if (Succ->Tipo == Val) {
+        /* Un valore può stare dopo un'operazione oppure dopo una parentesi aperta */
+        if (Prec->Tipo == Op || (Prec->Tipo == Par && Prec->Par == Aperta)) {
+            return 1;
+        }
+
+        return 0;
+    }
+}
+
+int Interpreta(FILE* FlussoIn, Elemento** InizioExpr, Elemento** FineExpr) {
     /* Memorizza i caratteri che costituiscono l'espressione */
     char Espressione[LUNG_MAX];
     /* Indice per iterare sui caratteri in Espressione */
@@ -144,6 +217,11 @@ int Interpreta(FILE* FlussoIn, Elemento* InizioExpr, Elemento* FineExpr) {
         return 1;
     }
 
+    (*InizioExpr) = NULL, (*FineExpr) = NULL;
+
+    ParAperte = 0, ParChiuse = 0;
+
+    /* La variabile i viene opportunamente incrementata da InterpretaFrammento */
     i = 0;
     /* Itera sui caratteri dell'espressione fino al tappo */
     while (Espressione[i] != '\x00') {
@@ -153,10 +231,41 @@ int Interpreta(FILE* FlussoIn, Elemento* InizioExpr, Elemento* FineExpr) {
             return 1;
         }
 
+        if ((*InizioExpr) == NULL) {
+            /* L'inizio non è definito, quindi è il primo elemento */
+            /* Un'espressione può iniziare solo con un valore o con '(' */
+            if (Elem->Tipo == Val || (Elem->Tipo == Par && Elem->Par == Aperta)) {
+                (*InizioExpr) = Elem;
+                (*FineExpr) = Elem;
+            } else {
+                fprintf(stderr, "\033[0;31ml'espressione non può iniziare con %c\033[0m\n", Espressione[0]);
+                return 1;
+            }
+        } else {
+            /* Dal secondo elemento in poi */
+            if (SequenzaValida((*FineExpr), Elem)) {
+                (*FineExpr)->Succ = Elem;
+                Elem->Prec = (*FineExpr);
+                (*FineExpr) = Elem;
+            } else {
+                fprintf(stderr, "\033[0;31merrore sintattico prima dell'indice %d\033[0m\n", i);
+                return 1;
+            }
 
+            if (Elem->Tipo == Par) {
+                if (Elem->Par == Aperta) {
+                    ParAperte++;
+                } else {
+                    ParChiuse++;
+                }
+            }
+        }
     }
 
-    printf("%s\n", Espressione);
+    if (ParAperte != ParChiuse) {
+        fprintf(stderr, "\033[0;31mci sono %d parentesi aperte e %d chiuse\033[0m\n", ParAperte, ParChiuse);
+        return 1;
+    }
 
     return 0;
 }

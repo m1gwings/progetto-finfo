@@ -19,12 +19,16 @@ int LeggiEspressione(FILE* FlussoIn, char* Espressione);
  * NULL altrimenti */
 Elemento* InterpretaFrammento(int* Inizio, char* Espressione);
 
+/* SequenzaValida restituisce 1 se l'elemento Succ posto dopo Prec è sintatticamente corretto,
+ * 0 altrimenti */
+int SequenzaValida(Elemento* Prec, Elemento* Succ);
+
 /* Interpeta richiama LeggiEspressione(FlussoIn, Espressione) e successivamente
  * converte i caratteri contenuti in espressione in Elementi dell'espressione, 
  * rappresentata da una lista dinamica con testa in InizioExpr e coda in FineExpr
  *
  * La funzione restituisce 0 nel caso in cui non ci siano errori,
  * 1 altrimenti */
-int Interpreta(FILE* FlussoIn, Elemento* InizioExpr, Elemento* FineExpr);
+int Interpreta(FILE* FlussoIn, Elemento** InizioExpr, Elemento** FineExpr);
 
 #endif
