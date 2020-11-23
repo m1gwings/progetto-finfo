@@ -24,7 +24,7 @@ Elemento* InterpretaFrammento(int* Inizio, char* Espressione);
 int SequenzaValida(Elemento* Prec, Elemento* Succ);
 
 /* Interpeta richiama LeggiEspressione(FlussoIn, Espressione) e successivamente
- * converte i caratteri contenuti in espressione in Elementi dell'espressione, 
+ * converte i caratteri contenuti in espressione in Elementi dell'espressione,
  * rappresentata da una lista dinamica con testa in InizioExpr e coda in FineExpr
  *
  * La funzione restituisce 0 nel caso in cui non ci siano errori,

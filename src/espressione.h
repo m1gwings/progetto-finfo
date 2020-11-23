@@ -46,4 +46,8 @@ typedef struct Elemento {
     struct Elemento* Prec;
 } Elemento;
 
+/* StampaEspressione è una funzione di debug che stampa l'espressione
+ * contenuta tra InizioExpr e FineExpr */
+void StampaEspressione(Elemento* InizioExpr, Elemento* FineExpr);
+
 #endif

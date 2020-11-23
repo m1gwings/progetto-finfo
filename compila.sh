@@ -7,4 +7,4 @@ do
         src_files="$src_files ./src/$file"
     fi
 done
-gcc -o risolvi-espressioni $src_files -ansi -pedantic -lm
+gcc -o risolvi-espressioni $src_files -ansi -pedantic -lm -D LUNG_MAX=100

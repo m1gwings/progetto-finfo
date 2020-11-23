@@ -2,12 +2,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-/* Lunghezza massima della stringa contenente l'espressione */
-#define LUNG_MAX 100
-
 int LeggiEspressione(FILE* FlussoIn, char* Espressione) {
     /* L'array associa a ciascun carattere ASCII il valore
-     *  - 0 nel caso in cui il carattere non dovrebbe comparire all'interno dell'espressione 
+     *  - 0 nel caso in cui il carattere non dovrebbe comparire all'interno dell'espressione
      *  - 1 altrimenti */
     int CratteriValidi[128] = {0};
 
